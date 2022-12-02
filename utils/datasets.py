@@ -87,7 +87,8 @@ def create_dataloader(path, imgsz, batch_size, stride, opt, hyp=None, augment=Fa
                         num_workers=nw,
                         sampler=sampler,
                         pin_memory=True,
-                        collate_fn=LoadImagesAndLabels.collate_fn4 if quad else LoadImagesAndLabels.collate_fn)
+                        collate_fn=LoadImagesAndLabels.collate_fn4 if quad else LoadImagesAndLabels.collate_fn,
+                        shuffle=True)
     return dataloader, dataset
 
 
@@ -448,6 +449,9 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
         # Cache images into memory for faster training (WARNING: large datasets may exceed system RAM)
         self.imgs = [None] * n
         if cache_images:
+            with open('index_log.txt', 'a') as f:
+                f.write(f"CACHING IMAGES INTO MEMORY\n")
+
             if cache_images == 'disk':
                 self.im_cache_dir = Path(Path(self.img_files[0]).parent.as_posix() + '_npy')
                 self.img_npy = [self.im_cache_dir / Path(f).with_suffix('.npy').name for f in self.img_files]
@@ -466,6 +470,9 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
                     gb += self.imgs[i].nbytes
                 pbar.desc = f'{prefix}Caching images ({gb / 1E9:.1f}GB)'
             pbar.close()
+
+            with open('index_log.txt', 'a') as f:
+                f.write(f"DONE CACHING IMAGES INTO MEMORY\n")
 
     def cache_labels(self, path=Path('./labels.cache'), prefix=''):
         # Cache dataset labels, check images and read shapes
@@ -533,6 +540,10 @@ class LoadImagesAndLabels(Dataset):  # for training/testing
 
     def __getitem__(self, index):
         index = self.indices[index]  # linear, shuffled, or image_weights
+    
+        # write index to log file
+        with open('index_log.txt', 'a') as f:
+            f.write(f"Image index loaded: {index}\n")
 
         hyp = self.hyp
         mosaic = self.mosaic and random.random() < hyp['mosaic']
