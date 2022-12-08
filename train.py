@@ -192,7 +192,7 @@ def train(hyp, opt, device, tb_writer=None):
     if opt.linear_lr:
         lf = lambda x: (1 - x / (epochs - 1)) * (1.0 - hyp['lrf']) + hyp['lrf']  # linear
     else:
-        lf = one_cycle(0.5, hyp['lrf'], epochs)  # cosine 0.5->hyp['lrf'] (CHANGED 1 TO 0.5)
+        lf = one_cycle(0.25, hyp['lrf'], epochs)  # cosine 0.5->hyp['lrf'] (CHANGED 1 TO 0.5)
     scheduler = lr_scheduler.LambdaLR(optimizer, lr_lambda=lf)
     # plot_lr_scheduler(optimizer, scheduler, epochs)
 
