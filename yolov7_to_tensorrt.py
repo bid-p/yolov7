@@ -25,13 +25,13 @@ if __name__ == "__main__":
 
     # try:
     #     print("Cloning TensorRT repo...")
-    #     os.system("rm -rf tensorrt-python")
-    #     os.system("git clone https://github.com/Linaom1214/tensorrt-python.git")
+    #     os.system("rm -rf TensorRT-For-YOLO-Series")
+    #     os.system("git clone https://github.com/bid-p/TensorRT-For-YOLO-Series.git")
     # except Exception as e:
     #     raise e
     
     try:
         print("Converting ONNX to TensorRT...")
-        os.system(f"python3 ./tensorrt-python/export.py -o {model_path}.onnx -e {model_path}.trt -p fp16 --verbose")
+        os.system(f"python3 ./TensorRT-For-YOLO-Series/export.py -o {model_path}.onnx -e {model_path}.trt -p fp16 --verbose")
     except Exception as e:
         raise e
